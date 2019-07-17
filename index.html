@@ -12,7 +12,7 @@
     </div>
     <div id="add_images_field">
         <input type="file" accept="image/*" id="file-input" multiple style="width:100px; height:30px;"/>
-        <div id="target" style="width:300px; height:60px; text-align:center; background-color:#7b1fa2;">You can drag images here</div>
+        <!--<div id="target" style="width:300px; height:60px; text-align:center; background-color:#7b1fa2;">You can drag images here</div>-->
     </div>
     <div id="selector_container" style="width:100%">
         <img id="A">
@@ -28,7 +28,7 @@
     <script>
         //Viewhoders
         const fileInput = document.getElementById("file-input");
-        const target = document.getElementById("target");
+        //const target = document.getElementById("target");
         const imageA = document.getElementById("A");
         const imageB = document.getElementById("B");
         const selectorContainer = document.getElementById("selector_container");
@@ -45,6 +45,7 @@
         fileInput.addEventListener("change", (e) => onImagesAdd(e.target.files));
 
         // Drag&drop files area listener
+        /**
         target.addEventListener("drop", (e) => {
             e.stopPropagation();
             e.preventDefault();
@@ -54,7 +55,7 @@
             e.stopPropagation();
             e.preventDefault();
             e.dataTransfer.dropEffect = "copy";
-        });
+        });*/
 
         // On images click listeners
         imageA.addEventListener("click", function(e) {
@@ -107,7 +108,7 @@
           }
         }
 
-        function showImageOn(ab, image){
+        function loadImageOn(ab, image){
           if(ab==0) imageA.src = URL.createObjectURL(image);
           if(ab==1) imageB.src = URL.createObjectURL(image);
         }
@@ -167,7 +168,7 @@
         function resizeImageForScreen(image){
           var WtoH = image.naturalWidth/image.naturalHeight;
           var availableWidth = window.innerWidth-40; //-50 margin
-          var availableHeight = window.innerHeight-130; //-addingField.height;
+          var availableHeight = window.innerHeight-80; //-addingField.height;
           var w = image.naturalWidth;
           var h = image.naturalHeight;
           if(h>availableHeight){ // image is too high
@@ -212,7 +213,7 @@
           isTestRunning=true;
           currentAB[0] = getNextRandomIndexExcept(-1);
           currentAB[1] = getNextRandomIndexExcept(currentAB[0]);
-          modeSwitched(getCheckedRBmodeValue());
+          setupView();
         }
 
         function onImageClick(ab){
@@ -227,11 +228,11 @@
         }
 
         function next(ab){
-          if(count<=2) isTestRunning=false;
           var notClicked=1-ab;
           images[currentAB[notClicked]]=null;
           count--;
           if(count==1){
+            isTestRunning=false;
             currentAB[notClicked]=-1;
             removeImageOn(notClicked);
             alert("Congratulations! You've chosen th best one!");
@@ -258,19 +259,23 @@
           }
         }
 
-        function modeSwitched(on){
-          if(on==MODE_COMPARE){
+        function modeSwitched(){
+          setupView();
+        }
+
+        function setupView(){
+          if(getCheckedRBmodeValue()==MODE_COMPARE){
             compare();
             updateImages();
-          } else if(on==MODE_SLIDER){
+          } else if(getCheckedRBmodeValue()==MODE_SLIDER){
             slide(1);
             updateImages();
           }
         }
 
         function updateImages(){
-          showImageOn(0, images[currentAB[0]]);
-          showImageOn(1, images[currentAB[1]]);
+          loadImageOn(0, images[currentAB[0]]);
+          loadImageOn(1, images[currentAB[1]]);
         }
 
         function skip(){
