@@ -18,6 +18,7 @@
         <img id="A">
         <img id="B">
     </div>
+    <input type="button" onclick="selectCurrent()" value="THIS" id="select_current" style="width:100px; height:30px; position: absolute; bottom: 50px; right: 200px; display:none"/>
     <div horizontal layout style="position: absolute; bottom: 0; left: 0;">
         <input type="button" onclick="skip()" value="Skip" style="width:100px; height:30px;"/>
         <label> <input type="checkbox" id="save_chosen" checked> Save chosen image for next decision </label>
@@ -36,6 +37,7 @@
         const header = document.getElementById("header");
         const saveChosen = document.getElementById("save_chosen");
         const modeRBs = document.getElementsByName("mode");
+        const selectCurrentBtn = document.getElementById("select_current");
         const MODE_COMPARE = 0;
         const MODE_SLIDER = 1;
         var isHorisontal = window.innerHeight < window.innerWidth;
@@ -120,6 +122,11 @@
           for (var i=0; i<modeRBs.length; i++)
             if (modeRBs[i].checked)
               return modeRBs[i].value;
+        }
+        function getCurrentImageForSlideMode(){
+          if(getCheckedRBmodeValue()!=MODE_SLIDER) return -1;
+          if(imageA.style.display!="none") return 0;
+          if(imageB.style.display!="none") return 1;
         }
     </script>
 
@@ -227,6 +234,12 @@
           }
         }
 
+        function selectCurrent(){
+          if(!isTestRunning) return;
+          next(getCurrentImageForSlideMode());
+          updateImages();
+        }
+
         function next(ab){
           var notClicked=1-ab;
           images[currentAB[notClicked]]=null;
@@ -245,11 +258,13 @@
         }
 
         function compare(){
+          hide(selectCurrentBtn);
           show(imageA);
           show(imageB);
         }
 
         function slide(ab){
+          show(selectCurrentBtn);
           if(ab==0){
             hide(imageA);
             show(imageB);
