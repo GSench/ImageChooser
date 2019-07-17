@@ -21,7 +21,8 @@
     <div horizontal layout style="position: absolute; bottom: 0; left: 0;">
         <input type="button" onclick="skip()" value="Skip" style="width:100px; height:30px;"/>
         <label> <input type="checkbox" id="save_chosen" checked> Save chosen image for next decision </label>
-
+        <label> <input name="mode" type="radio" value="0" checked> Compare mode </label>
+        <label> <input name="mode" type="radio" value="1"> Slider mode </label>
     </div>
 
     <script>
@@ -34,6 +35,9 @@
         const addingField = document.getElementById("add_images_field");
         const header = document.getElementById("header");
         const saveChosen = document.getElementById("save_chosen");
+        const modeRBs = document.getElementsByName("mode");
+        const MODE_COMPARE = 0;
+        const MODE_SLIDER = 1;
 
         // Listeners
         // Drop files button listener
@@ -76,10 +80,24 @@
 
         // Resizing images to fit the window
         imageA.onload = function() {
-          resizeImageForHalfOfScreen(imageA);
+          console.log("onload imageA");
+          console.log("mode: "+getCheckedRBmodeValue());
+          if(getCheckedRBmodeValue()==MODE_COMPARE) {
+              console.log("resizeImageForHalfOfScreen(imageA)");
+              resizeImageForHalfOfScreen(imageA);
+          } else if(getCheckedRBmodeValue()==MODE_SLIDER) {
+              resizeImageForScreen(imageA);
+          }
         }
         imageB.onload = function() {
-          resizeImageForHalfOfScreen(imageB);
+          console.log("onload imageB");
+          console.log("mode: "+getCheckedRBmodeValue());
+          if(getCheckedRBmodeValue()==MODE_COMPARE) {
+              console.log("resizeImageForHalfOfScreen(imageB)");
+              resizeImageForHalfOfScreen(imageB);
+          } else if(getCheckedRBmodeValue()==MODE_SLIDER) {
+              resizeImageForScreen(imageB);
+          }
         }
 
     </script>
@@ -95,17 +113,17 @@
           if(ab==0) imageA.src = "#";
           if(ab==1) imageB.src = "#";
         }
-        function hideHeader(){
-          header.style.display = "none";
+        function hide(element){
+          element.style.display = "none";
         }
-        function showHeader(){
-          header.style.display = "block";
+        function show(element){
+          element.style.display = "block";
         }
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
         function resizeImageForHalfOfScreen(image){
-          //console.log("ImageB loading, ist size: "+image.naturalWidth+"px x "+image.naturalHeight+"px");
+          console.log("ImageB loading, ist size: "+image.naturalWidth+"px x "+image.naturalHeight+"px");
           var WtoH = image.naturalWidth/image.naturalHeight;
           var availableWidth = window.innerWidth-40; //-50 margin
           var availableHeight = window.innerHeight-130; //-addingField.height;
@@ -130,8 +148,31 @@
               h = w/WtoH // changing height proportionaly
             }
           }
+          console.log("changed to: "+w+"px x "+h+"px");
           image.style.width = w+"px";
           image.style.height = h+"px";
+        }
+        function resizeImageForScreen(image){
+          var WtoH = image.naturalWidth/image.naturalHeight;
+          var availableWidth = window.innerWidth-40; //-50 margin
+          var availableHeight = window.innerHeight-130; //-addingField.height;
+          var w = image.naturalWidth;
+          var h = image.naturalHeight;
+          if(h>availableHeight){ // image is too high
+            h = availableHeight; // changing height to fit window height
+            w = h*WtoH// changing width proportionaly
+          }
+          if(w>availableWidth){ // now it is too wide
+            w = availableWidth; // changing width to fit 1/2 window width
+            h = w/WtoH; // changing height proportionaly
+          }
+          image.style.width = w+"px";
+          image.style.height = h+"px";
+        }
+        function getCheckedRBmodeValue(){
+          for (var i=0; i<modeRBs.length; i++)
+            if (modeRBs[i].checked)
+              return modeRBs[i].value;
         }
     </script>
 
@@ -160,16 +201,27 @@
         }
 
         function startTest(){
-          hideHeader();
+          hide(header);
           isTestRunning=true;
           currentAB[0] = getNextRandomIndexExcept(-1);
           currentAB[1] = getNextRandomIndexExcept(currentAB[0]);
           showImageOn(0, images[currentAB[0]]);
           showImageOn(1, images[currentAB[1]]);
+          if(getCheckedRBmodeValue()==MODE_SLIDER) slide(1);
+          else if(getCheckedRBmodeValue()==MODE_COMPARE) compare();
         }
 
         function onImageClick(ab){
           if(!isTestRunning) return;
+          if(getCheckedRBmodeValue()==MODE_COMPARE) {
+              compare();
+              next(ab);
+          } else if(getCheckedRBmodeValue()==MODE_SLIDER){
+              slide(ab);
+          }
+        }
+
+        function next(ab){
           if(count<=2) isTestRunning=false;
           var notClicked=1-ab;
           images[currentAB[notClicked]]=null;
@@ -185,6 +237,21 @@
             }
             currentAB[notClicked]=getNextRandomIndexExcept(currentAB[ab]);
             showImageOn(notClicked, images[currentAB[notClicked]]);
+          }
+        }
+
+        function compare(){
+          show(imageA);
+          show(imageB);
+        }
+
+        function slide(ab){
+          if(ab==0){
+            hide(imageA);
+            show(imageB);
+          } else if(ab==1){
+            hide(imageB);
+            show(imageA);
           }
         }
 
