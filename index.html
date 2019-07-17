@@ -38,6 +38,7 @@
         const modeRBs = document.getElementsByName("mode");
         const MODE_COMPARE = 0;
         const MODE_SLIDER = 1;
+        var isHorisontal = window.innerHeight < window.innerWidth;
 
         // Listeners
         // Drop files button listener
@@ -62,10 +63,18 @@
         imageB.addEventListener("click", function(e) {
             onImageClick(1);
         });
+        for(var i=0; i<modeRBs.length; i++){
+          const j=i;
+          modeRBs[i].addEventListener('change', function() {
+            if(modeRBs[j].checked) modeSwitched(j);
+          });
+        }
+    </script>
 
+    <script>
+        // View
         //Layout setting
         //Portrait/Landscape
-        const isHorisontal = window.innerHeight < window.innerWidth;
         if (isHorisontal) {
             selectorContainer.setAttribute("horizontal", "");
             selectorContainer.setAttribute("layout", "");
@@ -74,8 +83,6 @@
         } else {
             selectorContainer.setAttribute("vertical", "");
             selectorContainer.setAttribute("layout", "");
-            //imageA.style.width="100%";
-            //imageB.style.width="100%";
         }
 
         // Resizing images to fit the window
@@ -100,11 +107,6 @@
           }
         }
 
-    </script>
-
-
-    <script>
-        // API
         function showImageOn(ab, image){
           if(ab==0) imageA.src = URL.createObjectURL(image);
           if(ab==1) imageB.src = URL.createObjectURL(image);
@@ -113,11 +115,21 @@
           if(ab==0) imageA.src = "#";
           if(ab==1) imageB.src = "#";
         }
+        function getCheckedRBmodeValue(){
+          for (var i=0; i<modeRBs.length; i++)
+            if (modeRBs[i].checked)
+              return modeRBs[i].value;
+        }
+    </script>
+
+
+    <script>
+        // API
         function hide(element){
           element.style.display = "none";
         }
         function show(element){
-          element.style.display = "block";
+          element.style.display = "";
         }
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -169,11 +181,6 @@
           image.style.width = w+"px";
           image.style.height = h+"px";
         }
-        function getCheckedRBmodeValue(){
-          for (var i=0; i<modeRBs.length; i++)
-            if (modeRBs[i].checked)
-              return modeRBs[i].value;
-        }
     </script>
 
     <script>
@@ -205,10 +212,7 @@
           isTestRunning=true;
           currentAB[0] = getNextRandomIndexExcept(-1);
           currentAB[1] = getNextRandomIndexExcept(currentAB[0]);
-          showImageOn(0, images[currentAB[0]]);
-          showImageOn(1, images[currentAB[1]]);
-          if(getCheckedRBmodeValue()==MODE_SLIDER) slide(1);
-          else if(getCheckedRBmodeValue()==MODE_COMPARE) compare();
+          modeSwitched(getCheckedRBmodeValue());
         }
 
         function onImageClick(ab){
@@ -216,6 +220,7 @@
           if(getCheckedRBmodeValue()==MODE_COMPARE) {
               compare();
               next(ab);
+              updateImages();
           } else if(getCheckedRBmodeValue()==MODE_SLIDER){
               slide(ab);
           }
@@ -233,10 +238,8 @@
           } else {
             if(!saveChosen.checked){
               currentAB[ab]=getNextRandomIndexExcept(currentAB[ab]);
-              showImageOn(ab, images[currentAB[ab]]);
             }
             currentAB[notClicked]=getNextRandomIndexExcept(currentAB[ab]);
-            showImageOn(notClicked, images[currentAB[notClicked]]);
           }
         }
 
@@ -253,6 +256,21 @@
             hide(imageB);
             show(imageA);
           }
+        }
+
+        function modeSwitched(on){
+          if(on==MODE_COMPARE){
+            compare();
+            updateImages();
+          } else if(on==MODE_SLIDER){
+            slide(1);
+            updateImages();
+          }
+        }
+
+        function updateImages(){
+          showImageOn(0, images[currentAB[0]]);
+          showImageOn(1, images[currentAB[1]]);
         }
 
         function skip(){
