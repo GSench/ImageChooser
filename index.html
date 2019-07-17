@@ -11,46 +11,51 @@
         <p>Load images and choose the best one passing A/B testing.<br>You can add new images at any time, even during the test running.</p>
     </div>
     <div id="add_images_field">
-        <input type="file" accept="image/*" id="file-input" multiple>
+        <input type="file" accept="image/*" id="file-input" multiple style="width:100px; height:30px;"/>
         <div id="target" style="width:300px; height:60px; text-align:center; background-color:#7b1fa2;">You can drag images here</div>
     </div>
     <div id="selector_container" style="width:100%">
         <img id="A">
         <img id="B">
     </div>
-    <input type="button" onclick="skip()" value="Skip" style="width:100px; height:30px; position: absolute; bottom: 0; left: 0;"/>
+    <div horizontal layout style="position: absolute; bottom: 0; left: 0;">
+        <input type="button" onclick="skip()" value="Skip" style="width:100px; height:30px;"/>
+        <label> <input type="checkbox" id="save_chosen" checked> Save chosen image for next decision </label>
+
+    </div>
 
     <script>
         //Viewhoders
-        const fileInput = document.getElementById('file-input');
-        const target = document.getElementById('target');
-        const imageA = document.getElementById('A');
-        const imageB = document.getElementById('B');
-        const selectorContainer = document.getElementById('selector_container');
-        const addingField = document.getElementById('add_images_field');
-        const header = document.getElementById('header');
+        const fileInput = document.getElementById("file-input");
+        const target = document.getElementById("target");
+        const imageA = document.getElementById("A");
+        const imageB = document.getElementById("B");
+        const selectorContainer = document.getElementById("selector_container");
+        const addingField = document.getElementById("add_images_field");
+        const header = document.getElementById("header");
+        const saveChosen = document.getElementById("save_chosen");
 
         // Listeners
         // Drop files button listener
-        fileInput.addEventListener('change', (e) => onImagesAdd(e.target.files));
+        fileInput.addEventListener("change", (e) => onImagesAdd(e.target.files));
 
         // Drag&drop files area listener
-        target.addEventListener('drop', (e) => {
+        target.addEventListener("drop", (e) => {
             e.stopPropagation();
             e.preventDefault();
             onImagesAdd(e.dataTransfer.files);
         });
-        target.addEventListener('dragover', (e) => {
+        target.addEventListener("dragover", (e) => {
             e.stopPropagation();
             e.preventDefault();
-            e.dataTransfer.dropEffect = 'copy';
+            e.dataTransfer.dropEffect = "copy";
         });
 
         // On images click listeners
-        imageA.addEventListener('click', function(e) {
+        imageA.addEventListener("click", function(e) {
             onImageClick(0);
         });
-        imageB.addEventListener('click', function(e) {
+        imageB.addEventListener("click", function(e) {
             onImageClick(1);
         });
 
@@ -58,71 +63,23 @@
         //Portrait/Landscape
         const isHorisontal = window.innerHeight < window.innerWidth;
         if (isHorisontal) {
-            selectorContainer.setAttribute('horizontal', '');
-            selectorContainer.setAttribute('layout', '');
-            imageA.setAttribute('class', 'childDiv left');
-            imageB.setAttribute('class', 'childDiv right');
+            selectorContainer.setAttribute("horizontal", "");
+            selectorContainer.setAttribute("layout", "");
+            imageA.setAttribute("class", "childDiv left");
+            imageB.setAttribute("class", "childDiv right");
         } else {
-            selectorContainer.setAttribute('vertical', '');
-            selectorContainer.setAttribute('layout', '');
+            selectorContainer.setAttribute("vertical", "");
+            selectorContainer.setAttribute("layout", "");
             //imageA.style.width="100%";
             //imageB.style.width="100%";
         }
 
         // Resizing images to fit the window
         imageA.onload = function() {
-          console.log("ImageA loading, ist size: "+imageA.naturalWidth+"px x "+imageA.naturalHeight+"px");
-          var WtoHA = imageA.naturalWidth/imageA.naturalHeight;
-          var availableWidth = window.innerWidth;
-          var availableHeight = window.innerHeight-130; //-addingField.height;
-          console.log("availableWidth = "+availableWidth+" availableHeight = "+availableHeight);
-          if(isHorisontal){
-            var tmp=imageA.naturalWidth; // need to remember current image width as nuber
-            if(imageA.naturalHeight>availableHeight){ // image is too high
-              tmp = availableHeight;
-              imageA.style.height=tmp+"px"; // changing height to fit window height
-              imageA.style.width=(tmp*WtoHA)+"px"; // changing width proportionaly
-              tmp=tmp*WtoHA; // update current image width as nuber
-            }
-            if(tmp>availableWidth/2){ // now it is too wide
-              var tmp = availableWidth/2-50; //-50 margin
-              imageA.style.width=tmp+"px"; // changing width to fit 1/2 window width
-              imageA.style.height=(tmp/WtoHA)+"px"; // changing height proportionaly
-            }
-          } else {
-            if(imageA.naturalHeight>availableHeight/2){ // image is to high
-              var tmp = availableHeight/2;
-              imageA.style.height=tmp+"px"; // changing height to fit 1/2 window height
-              imageA.style.width=(tmp*WtoHA)+"px"; // changing width proportionaly
-            }
-          }
+          resizeImageForHalfOfScreen(imageA);
         }
         imageB.onload = function() {
-          console.log("ImageB loading, ist size: "+imageB.naturalWidth+"px x "+imageB.naturalHeight+"px");
-          var WtoHB = imageB.naturalWidth/imageB.naturalHeight;
-          var availableWidth = window.innerWidth;
-          var availableHeight = window.innerHeight-130; //-addingField.height;
-          console.log("availableWidth = "+availableWidth+" availableHeight = "+availableHeight);
-          if(isHorisontal){
-            var tmp = imageB.naturalWidth; // need to remember current image width as nuber
-            if(imageB.naturalHeight>availableHeight){ // image is too high
-              var tmp = availableHeight;
-              imageB.style.height=tmp+"px"; // changing height to fit window height
-              imageB.style.width=(tmp*WtoHB)+"px"; // changing width proportionaly
-              tmp=tmp*WtoHB; // update current image width as nuber
-            }
-            if(tmp>availableWidth/2){ // now it is too wide
-              var tmp = availableWidth/2-50; //-50 margin
-              imageB.style.width=tmp+"px"; // changing width to fit 1/2 window width
-              imageB.style.height=(tmp/WtoHB)+"px"; // changing height proportionaly
-            }
-          } else {
-            if(imageB.naturalHeight>availableHeight/2){ // image is to high
-              var tmp = availableHeight/2;
-              imageB.style.height=tmp+"px"; // changing height to fit 1/2 window height
-              imageB.style.width=(tmp*WtoHB)+"px"; // changing width proportionaly
-            }
-          }
+          resizeImageForHalfOfScreen(imageB);
         }
 
     </script>
@@ -139,13 +96,42 @@
           if(ab==1) imageB.src = "#";
         }
         function hideHeader(){
-          header.style.display = 'none';
+          header.style.display = "none";
         }
         function showHeader(){
-          header.style.display = 'block';
+          header.style.display = "block";
         }
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        function resizeImageForHalfOfScreen(image){
+          //console.log("ImageB loading, ist size: "+image.naturalWidth+"px x "+image.naturalHeight+"px");
+          var WtoH = image.naturalWidth/image.naturalHeight;
+          var availableWidth = window.innerWidth-40; //-50 margin
+          var availableHeight = window.innerHeight-130; //-addingField.height;
+          var w = image.naturalWidth;
+          var h = image.naturalHeight;
+          if(isHorisontal){
+            if(h>availableHeight){ // image is too high
+              h = availableHeight; // changing height to fit window height
+              w = h*WtoH// changing width proportionaly
+            }
+            if(w>availableWidth/2){ // now it is too wide
+              w = availableWidth/2; // changing width to fit 1/2 window width
+              h = w/WtoH; // changing height proportionaly
+            }
+          } else {
+            if(h>availableHeight/2){ // image is to high
+              h = availableHeight/2;// changing height to fit 1/2 window height
+              w = h*WtoH; // changing width proportionaly
+            }
+            if(w>availableWidth){ // now it is too wide
+              w = availableWidth; // changing width to fit window width
+              h = w/WtoH // changing height proportionaly
+            }
+          }
+          image.style.width = w+"px";
+          image.style.height = h+"px";
         }
     </script>
 
@@ -193,6 +179,10 @@
             removeImageOn(notClicked);
             alert("Congratulations! You've chosen th best one!");
           } else {
+            if(!saveChosen.checked){
+              currentAB[ab]=getNextRandomIndexExcept(currentAB[ab]);
+              showImageOn(ab, images[currentAB[ab]]);
+            }
             currentAB[notClicked]=getNextRandomIndexExcept(currentAB[ab]);
             showImageOn(notClicked, images[currentAB[notClicked]]);
           }
