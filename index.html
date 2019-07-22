@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <head>
     <title>Choose the Best Image!</title>
 </head>
@@ -11,18 +11,20 @@
         <p>Load images and choose the best one passing A/B testing.<br>You can add new images at any time, even during the test running.</p>
     </div>
     <div id="add_images_field">
-        <input type="file" accept="image/*" id="file-input" multiple style="width:100px; height:30px;"/>
+        <input type="button" id="file" value="Add images" onclick="document.getElementById('file-input').click();" style="width:100px; height:30px;" />
+        <input type="file" accept="image/*" id="file-input" multiple style="display:none;"/>
     </div>
     <div id="selector_container" style="width:100%; height:100%">
         <img id="A">
         <img id="B">
     </div>
     <input type="button" onclick="selectCurrent()" value="THIS" id="select_current" style="width:100px; height:30px; position: absolute; bottom: 50px; right: 200px; display:none"/>
-    <div horizontal layout style="position: absolute; bottom: 0; left: 0;">
+    <div horizontal layout style="position: fixed; bottom: 0; left: 0;">
         <input type="button" onclick="skip()" value="Skip" style="width:100px; height:30px;"/>
         <label> <input type="checkbox" id="save_chosen" checked> Save chosen image for next decision </label>
         <label> <input name="mode" type="radio" value="0" checked> Compare mode </label>
         <label> <input name="mode" type="radio" value="1"> Slider mode </label>
+        <label> <input name="mode" type="radio" value="2"> Scroll mode </label>
     </div>
 
     <script>
@@ -39,6 +41,7 @@
         const selectCurrentBtn = document.getElementById("select_current");
         const MODE_COMPARE = 0;
         const MODE_SLIDER = 1;
+        const MODE_SCROLL = 2;
         var isHorisontal = window.innerHeight < window.innerWidth;
 
         // Listeners
@@ -76,22 +79,25 @@
 
         // Resizing images to fit the window
         imageA.onload = function() {
-          console.log("onload imageA");
-          console.log("mode: "+getCheckedRBmodeValue());
+          //console.log("onload imageA");
+          //console.log("mode: "+getCheckedRBmodeValue());
           if(getCheckedRBmodeValue()==MODE_COMPARE) {
-              console.log("resizeImageForHalfOfScreen(imageA)");
               resizeImageForHalfOfScreen(imageA);
           } else if(getCheckedRBmodeValue()==MODE_SLIDER) {
+              resizeImageForScreen(imageA);
+          } else if(getCheckedRBmodeValue()==MODE_SCROLL) {
               resizeImageForScreen(imageA);
           }
         }
         imageB.onload = function() {
-          console.log("onload imageB");
-          console.log("mode: "+getCheckedRBmodeValue());
+          //console.log("onload imageB");
+          //console.log("mode: "+getCheckedRBmodeValue());
           if(getCheckedRBmodeValue()==MODE_COMPARE) {
               console.log("resizeImageForHalfOfScreen(imageB)");
               resizeImageForHalfOfScreen(imageB);
           } else if(getCheckedRBmodeValue()==MODE_SLIDER) {
+              resizeImageForScreen(imageB);
+          } else if(getCheckedRBmodeValue()==MODE_SCROLL) {
               resizeImageForScreen(imageB);
           }
         }
@@ -187,6 +193,10 @@
               updateImages();
           } else if(getCheckedRBmodeValue()==MODE_SLIDER){
               slide(ab);
+          } else if(getCheckedRBmodeValue()==MODE_SCROLL) {
+              scroll();
+              next(ab);
+              updateImages();
           }
         }
 
@@ -230,6 +240,10 @@
           }
         }
 
+        function scroll(){
+          compare();
+        }
+
         function modeSwitched(){
           setupView();
         }
@@ -240,6 +254,9 @@
             updateImages();
           } else if(getCheckedRBmodeValue()==MODE_SLIDER){
             slide(1);
+            updateImages();
+          } else if(getCheckedRBmodeValue()==MODE_SCROLL){
+            scroll();
             updateImages();
           }
         }
