@@ -12,9 +12,8 @@
     </div>
     <div id="add_images_field">
         <input type="file" accept="image/*" id="file-input" multiple style="width:100px; height:30px;"/>
-        <!--<div id="target" style="width:300px; height:60px; text-align:center; background-color:#7b1fa2;">You can drag images here</div>-->
     </div>
-    <div id="selector_container" style="width:100%">
+    <div id="selector_container" style="width:100%; height:100%">
         <img id="A">
         <img id="B">
     </div>
@@ -43,21 +42,8 @@
         var isHorisontal = window.innerHeight < window.innerWidth;
 
         // Listeners
-        // Drop files button listener
+        // Load files button listener
         fileInput.addEventListener("change", (e) => onImagesAdd(e.target.files));
-
-        // Drag&drop files area listener
-        /**
-        target.addEventListener("drop", (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            onImagesAdd(e.dataTransfer.files);
-        });
-        target.addEventListener("dragover", (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            e.dataTransfer.dropEffect = "copy";
-        });*/
 
         // On images click listeners
         imageA.addEventListener("click", function(e) {
@@ -143,51 +129,21 @@
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
         function resizeImageForHalfOfScreen(image){
-          console.log("ImageB loading, ist size: "+image.naturalWidth+"px x "+image.naturalHeight+"px");
-          var WtoH = image.naturalWidth/image.naturalHeight;
           var availableWidth = window.innerWidth-40; //-50 margin
           var availableHeight = window.innerHeight-130; //-addingField.height;
-          var w = image.naturalWidth;
-          var h = image.naturalHeight;
           if(isHorisontal){
-            if(h>availableHeight){ // image is too high
-              h = availableHeight; // changing height to fit window height
-              w = h*WtoH// changing width proportionaly
-            }
-            if(w>availableWidth/2){ // now it is too wide
-              w = availableWidth/2; // changing width to fit 1/2 window width
-              h = w/WtoH; // changing height proportionaly
-            }
+            image.style.maxWidth = availableWidth/2+"px"
+            image.style.maxHeight = availableHeight+"px"
           } else {
-            if(h>availableHeight/2){ // image is to high
-              h = availableHeight/2;// changing height to fit 1/2 window height
-              w = h*WtoH; // changing width proportionaly
-            }
-            if(w>availableWidth){ // now it is too wide
-              w = availableWidth; // changing width to fit window width
-              h = w/WtoH // changing height proportionaly
-            }
+            image.style.maxHeight = availableHeight/2+"px"
+            image.style.maxWidth = availableWidth+"px"
           }
-          console.log("changed to: "+w+"px x "+h+"px");
-          image.style.width = w+"px";
-          image.style.height = h+"px";
         }
         function resizeImageForScreen(image){
-          var WtoH = image.naturalWidth/image.naturalHeight;
           var availableWidth = window.innerWidth-40; //-50 margin
           var availableHeight = window.innerHeight-80; //-addingField.height;
-          var w = image.naturalWidth;
-          var h = image.naturalHeight;
-          if(h>availableHeight){ // image is too high
-            h = availableHeight; // changing height to fit window height
-            w = h*WtoH// changing width proportionaly
-          }
-          if(w>availableWidth){ // now it is too wide
-            w = availableWidth; // changing width to fit 1/2 window width
-            h = w/WtoH; // changing height proportionaly
-          }
-          image.style.width = w+"px";
-          image.style.height = h+"px";
+          image.style.maxWidth = availableWidth+"px"
+          image.style.maxHeight = availableHeight+"px"
         }
     </script>
 
