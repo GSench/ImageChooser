@@ -5,7 +5,7 @@
     <title>Choose the Best Image!</title>
 </head>
 
-<body style="background-color:black; color: white;">
+<body style="background-color:black; color: white; overflow:auto;">
     <div id="header">
         <h1>Image A/B selector</h1>
         <p>Load images and choose the best one passing A/B testing.<br>You can add new images at any time, even during the test running.</p>
@@ -159,7 +159,6 @@
           var wh = getViewportWH();
           var availableWidth = wh[0]-40; //-50 margin
           var availableHeight = wh[1]-80; //-addingField.height;
-          console.log("availableWidth = "+availableWidth+" availableHeight = "+availableHeight);
           image.style.maxWidth = availableWidth+"px"
           image.style.maxHeight = availableHeight+"px"
         }
