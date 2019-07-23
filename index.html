@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <head>
     <title>Choose the Best Image!</title>
 </head>
@@ -18,7 +18,7 @@
         <img id="A">
         <img id="B">
     </div>
-    <input type="button" onclick="selectCurrent()" value="THIS" id="select_current" style="width:100px; height:30px; position: absolute; bottom: 50px; right: 200px; display:none"/>
+    <input type="button" onclick="selectCurrent()" value="THIS" id="select_current" style="width:100px; height:30px; position: fixed; bottom: 10%; right: 0; display:none"/>
     <div horizontal layout style="position: fixed; bottom: 0; left: 0;">
         <input type="button" onclick="skip()" value="Skip" style="width:100px; height:30px;"/>
         <label> <input type="checkbox" id="save_chosen" checked> Save chosen image for next decision </label>
@@ -26,6 +26,7 @@
         <label> <input name="mode" type="radio" value="1"> Slider mode </label>
         <label> <input name="mode" type="radio" value="2"> Scroll mode </label>
     </div>
+    <script type="text/javascript" src="jquery.js"></script>
 
     <script>
         //Viewhoders
@@ -93,7 +94,6 @@
           //console.log("onload imageB");
           //console.log("mode: "+getCheckedRBmodeValue());
           if(getCheckedRBmodeValue()==MODE_COMPARE) {
-              console.log("resizeImageForHalfOfScreen(imageB)");
               resizeImageForHalfOfScreen(imageB);
           } else if(getCheckedRBmodeValue()==MODE_SLIDER) {
               resizeImageForScreen(imageB);
@@ -134,9 +134,14 @@
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
+        function getViewportWH(){
+          return [$(window).width(), $(window).height()];
+        }
         function resizeImageForHalfOfScreen(image){
-          var availableWidth = window.innerWidth-40; //-50 margin
-          var availableHeight = window.innerHeight-130; //-addingField.height;
+          var wh = getViewportWH();
+          var availableWidth = wh[0]-40; //-50 margin
+          var availableHeight = wh[1]-130; //-addingField.height;
+          isHorisontal = window.innerHeight < window.innerWidth;
           if(isHorisontal){
             image.style.maxWidth = availableWidth/2+"px"
             image.style.maxHeight = availableHeight+"px"
@@ -146,8 +151,10 @@
           }
         }
         function resizeImageForScreen(image){
-          var availableWidth = window.innerWidth-40; //-50 margin
-          var availableHeight = window.innerHeight-80; //-addingField.height;
+          var wh = getViewportWH();
+          var availableWidth = wh[0]-40; //-50 margin
+          var availableHeight = wh[1]-80; //-addingField.height;
+          console.log("availableWidth = "+availableWidth+" availableHeight = "+availableHeight);
           image.style.maxWidth = availableWidth+"px"
           image.style.maxHeight = availableHeight+"px"
         }
