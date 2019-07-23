@@ -3,29 +3,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <head>
     <title>Choose the Best Image!</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300&display=swap" rel="stylesheet">
 </head>
 
-<body style="background-color:black; color: white; overflow:auto;">
+<body style="background-color:black; color: #e0e0e0; overflow:auto; margin:0; font-family: 'Roboto', sans-serif;">
     <div id="header">
         <h1>Image A/B selector</h1>
         <p>Load images and choose the best one passing A/B testing.<br>You can add new images at any time, even during the test running.</p>
     </div>
     <div id="add_images_field">
-        <input type="button" id="file" value="Add images" onclick="document.getElementById('file-input').click();" style="width:100px; height:30px;" />
+        <input type="button" id="file" value="Add images" onclick="document.getElementById('file-input').click();" style="width:100px; height:30px; background-color:#212121;color:#e0e0e0;border:0;" />
         <input type="file" accept="image/*" id="file-input" multiple style="display:none;"/>
     </div>
     <div id="selector_container" style="width:100%; height:100%">
         <img id="A">
         <img id="B">
     </div>
-    <input type="button" onclick="selectCurrent()" value="THIS" id="select_current" style="width:100px; height:30px; position: fixed; bottom: 10%; right: 0; display:none"/>
+    <input type="button" onclick="selectCurrent()" value="THIS" id="select_current" style="width:100px; height:30px; position: fixed; bottom: 10%; right: 0; background-color:#212121;color:#e0e0e0;border:0; display:none"/>
     <div horizontal layout style="position: fixed; bottom: 0; left: 0;">
-        <input type="button" onclick="skip()" value="Skip" style="width:100px; height:30px;"/>
+        <input type="button" onclick="skip()" value="Skip" style="width:100px; height:30px; background-color:#212121;color:#e0e0e0;border:0;"/>
         <label> <input type="checkbox" id="save_chosen" checked> Save chosen image for next decision </label>
         <label> <input name="mode" type="radio" value="0" checked> Compare mode </label>
         <label> <input name="mode" type="radio" value="1"> Slider mode </label>
         <label> <input name="mode" type="radio" value="2"> Scroll mode </label>
-        <button id="goFS">Go fullscreen</button>
+        <button id="goFS" style="background-color:#212121;color:#e0e0e0;border:0;">Go fullscreen</button>
     </div>
     <script type="text/javascript" src="jquery.js"></script>
 
