@@ -25,3 +25,6 @@ All radio buttons are needed to select view mode.
 [Scroll mode] — every image is placed vertically on the page to fit the window.
 
 [Go fullscreen] button switches to full screen. Press Esc or Back to exit fullscreen mode.
+
+### Website
+ImageChooser app is available on [https://gsench.github.io/ImageChooser](https://gsench.github.io/ImageChooser)
