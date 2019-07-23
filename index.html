@@ -25,6 +25,7 @@
         <label> <input name="mode" type="radio" value="0" checked> Compare mode </label>
         <label> <input name="mode" type="radio" value="1"> Slider mode </label>
         <label> <input name="mode" type="radio" value="2"> Scroll mode </label>
+        <button id="goFS">Go fullscreen</button>
     </div>
     <script type="text/javascript" src="jquery.js"></script>
 
@@ -40,6 +41,7 @@
         const saveChosen = document.getElementById("save_chosen");
         const modeRBs = document.getElementsByName("mode");
         const selectCurrentBtn = document.getElementById("select_current");
+        const goFS = document.getElementById("goFS");
         const MODE_COMPARE = 0;
         const MODE_SLIDER = 1;
         const MODE_SCROLL = 2;
@@ -62,6 +64,9 @@
             if(modeRBs[j].checked) modeSwitched(j);
           });
         }
+        goFS.addEventListener("click", function() {
+          document.body.requestFullscreen();
+        }, false);
     </script>
 
     <script>
